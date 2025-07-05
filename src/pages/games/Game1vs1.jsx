@@ -5,9 +5,8 @@ import { PlayerInfo } from "./PlayerInfo";
 import { SoalModal } from "./SoalModal";
 import { getRandomSoal } from "../../api/apiSoal";
 import Swal from "sweetalert2";
-import { StartScreen } from "./StartScreen";
 
-const initialBiji = 1;
+const initialBiji = 5;
 
 export default function GamePage1v1() {
   const [player1, setPlayer1] = useState(Array(7).fill(initialBiji));

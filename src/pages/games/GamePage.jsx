@@ -5,10 +5,9 @@ import { PlayerInfo } from "./PlayerInfo";
 import { SoalModal } from "./SoalModal";
 import { getRandomSoal, finishGame } from "../../api/apiSoal";
 import Swal from "sweetalert2";
-import { StartScreen } from "./StartScreen";
 import toast from "react-hot-toast";
 
-const initialBiji = 1;
+const initialBiji = 5;
 
 export default function GamePage() {
   const [playerLubang, setPlayerLubang] = useState(Array(7).fill(initialBiji));
