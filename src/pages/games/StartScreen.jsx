@@ -5,14 +5,14 @@ export const StartScreen = () => {
   const navigate = useNavigate();
 
   const playStartSound = () => {
-    const audio = new Audio("/public/sound/game-start.mp3");
+    const audio = new Audio("/sound/game-start.mp3");
     audio.volume = 0.5;
     audio.play().catch(() => {});
   };
 
   const handleStart = (route) => {
     playStartSound();
-    setTimeout(() => navigate(route), 300); // delay agar sound sempat diputar
+    setTimeout(() => navigate(route), 500); 
   };
 
   return (
