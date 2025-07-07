@@ -28,9 +28,9 @@ export default function GamePage1v1() {
   const [modalOpen, setModalOpen] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
-  const klikSoal = useAudio("/public/sound/klik-soal.mp3");
-  const gantiTurn = useAudio("/public/sound/turn.mp3");
-  const victory = useAudio("/public/sound/victory.mp3");
+  const klikSoal = useAudio("/sound/klik-soal.mp3");
+  const gantiTurn = useAudio("/sound/turn.mp3");
+  const victory = useAudio("/sound/victory.mp3");
   const resetGame = () => {
     setPlayer1(Array(7).fill(initialBiji));
     setPlayer2(Array(7).fill(initialBiji));
