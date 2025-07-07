@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BoardRow } from "./BoardRow";
 import { HomeStore } from "./HomeStore";
 import { PlayerInfo } from "./PlayerInfo";
@@ -6,7 +6,13 @@ import { SoalModal } from "./SoalModal";
 import { getRandomSoal, finishGame } from "../../api/apiSoal";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import SoundControl from "../../components/Sound";
 
+const useAudio = (url) => {
+  const audio = useRef(new Audio(url));
+  audio.current.preload = "auto";
+  return audio;
+};
 const initialBiji = 5;
 
 export default function GamePage() {
@@ -25,6 +31,9 @@ export default function GamePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  const klikSoal = useAudio("/public/sound/klik-soal.mp3");
+  const gantiTurn = useAudio("/public/sound/turn.mp3");
+  const victory = useAudio("/public/sound/victory.mp3");
 
   const resetGame = () => {
     setPlayerLubang(Array(7).fill(initialBiji));
@@ -40,7 +49,7 @@ export default function GamePage() {
   const handlePilihLubang = async (index) => {
     if (currentTurn !== "player" || playerLubang[index] === 0 || gameOver)
       return;
-
+    klikSoal.current.play();
     setSelectedIndex(index);
     const soal = await getRandomSoal();
     setCurrentSoal(soal);
@@ -136,6 +145,7 @@ export default function GamePage() {
       const simpanSkor = async () => {
         try {
           await finishGame({ total_nilai: playerNilai });
+          victory.current.play();
           toast.success("Skor berhasil disimpan!");
         } catch (error) {
           console.error("Gagal menyimpan skor:", error);
@@ -195,6 +205,7 @@ export default function GamePage() {
       ) {
         nextTurn = pemain === "player" ? "komputer" : "player";
       }
+      gantiTurn.current.play();
       setCurrentTurn(nextTurn);
     }
   };
@@ -207,13 +218,12 @@ export default function GamePage() {
       if (!bisaJalan) {
         setTimeout(() => setCurrentTurn("komputer"), 1000);
       }
-      return; 
+      return;
     }
 
     if (currentTurn === "komputer") {
       const bisaJalan = komputerLubang.some((val) => val > 0);
       if (!bisaJalan) {
-
         setTimeout(() => setCurrentTurn("player"), 1000);
         return;
       }
@@ -238,6 +248,7 @@ export default function GamePage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      <SoundControl />
       <PlayerInfo
         name="Komputer"
         skorLumbung={komputerGudang}

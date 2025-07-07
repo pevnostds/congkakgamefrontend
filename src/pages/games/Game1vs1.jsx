@@ -1,11 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BoardRow } from "./BoardRow";
 import { HomeStore } from "./HomeStore";
 import { PlayerInfo } from "./PlayerInfo";
 import { SoalModal } from "./SoalModal";
 import { getRandomSoal } from "../../api/apiSoal";
 import Swal from "sweetalert2";
+import SoundControl from "../../components/Sound";
 
+const useAudio = (url) => {
+  const audio = useRef(new Audio(url));
+  audio.current.preload = "auto";
+  return audio;
+};
 const initialBiji = 5;
 
 export default function GamePage1v1() {
@@ -22,6 +28,9 @@ export default function GamePage1v1() {
   const [modalOpen, setModalOpen] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
+  const klikSoal = useAudio("/public/sound/klik-soal.mp3");
+  const gantiTurn = useAudio("/public/sound/turn.mp3");
+  const victory = useAudio("/public/sound/victory.mp3");
   const resetGame = () => {
     setPlayer1(Array(7).fill(initialBiji));
     setPlayer2(Array(7).fill(initialBiji));
@@ -37,6 +46,7 @@ export default function GamePage1v1() {
     const isCurrentPlayer1 = currentTurn === "player1";
     const lubang = isCurrentPlayer1 ? player1 : player2;
     if (lubang[index] === 0 || gameOver) return;
+    klikSoal.current.play();
 
     setSelectedIndex(index);
     const soal = await getRandomSoal();
@@ -72,15 +82,15 @@ export default function GamePage1v1() {
       lubang1[index] = 0;
       for (let i = index + 1; i < 7; i++)
         route.push({ sisi: "player1", index: i });
-    route.push({ sisi: "gudang", pemain: "player1" });
-    for (let i = 6; i >= 0; i--) route.push({ sisi: "player2", index: i });
-} else {
-    biji = lubang2[index];
-    lubang2[index] = 0;
-    for (let i = index - 1; i >= 0; i--)
-            route.push({ sisi: "player2", index: i });
-        route.push({ sisi: "gudang", pemain: "player2" });
-        for (let i = 0; i < 7; i++) route.push({ sisi: "player1", index: i });
+      route.push({ sisi: "gudang", pemain: "player1" });
+      for (let i = 6; i >= 0; i--) route.push({ sisi: "player2", index: i });
+    } else {
+      biji = lubang2[index];
+      lubang2[index] = 0;
+      for (let i = index - 1; i >= 0; i--)
+        route.push({ sisi: "player2", index: i });
+      route.push({ sisi: "gudang", pemain: "player2" });
+      for (let i = 0; i < 7; i++) route.push({ sisi: "player1", index: i });
     }
 
     let pos = 0;
@@ -130,7 +140,7 @@ export default function GamePage1v1() {
       setGudang1(gudang1Temp);
       setGudang2(gudang2Temp);
       setGameOver(true);
-
+      victory.current.play();
       Swal.fire({
         title: "Permainan Selesai!",
         icon: "info",
@@ -178,7 +188,7 @@ export default function GamePage1v1() {
     if (nextLubang.every((val) => val === 0)) {
       nextTurn = pemain;
     }
-
+    gantiTurn.current.play();
     setCurrentTurn(nextTurn);
   };
 
@@ -194,10 +204,9 @@ export default function GamePage1v1() {
     }
   }, [currentTurn, player1, player2, gameOver]);
 
-
-
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      <SoundControl />
       <PlayerInfo
         name="Player 2"
         skorLumbung={gudang2}

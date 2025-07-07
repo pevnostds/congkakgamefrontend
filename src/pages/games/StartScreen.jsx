@@ -1,6 +1,20 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 export const StartScreen = () => {
+  const navigate = useNavigate();
+
+  const playStartSound = () => {
+    const audio = new Audio("/public/sound/game-start.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+  };
+
+  const handleStart = (route) => {
+    playStartSound();
+    setTimeout(() => navigate(route), 300); // delay agar sound sempat diputar
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-200 to-indigo-300 p-4">
       <motion.div
@@ -21,30 +35,28 @@ export const StartScreen = () => {
         <ul className="text-justify list-decimal list-inside text-sm sm:text-base text-gray-600 mb-6 space-y-2">
           <li>Jawab soal sebelum melangkah</li>
           <li>Jawaban benar menambah skor nilai</li>
-          <li>
-              Masukkan Biji Ke Lumbung 
-          </li>
+          <li>Masukkan Biji Ke Lumbung</li>
           <li>Pemain dengan total skor tertinggi menang</li>
         </ul>
 
-     <p className="text-gray-700 text-sm sm:text-base mb-6 uppercase font-bold">
+        <p className="text-gray-700 text-sm sm:text-base mb-6 uppercase font-bold">
           Pilih Mode Permainan:
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Link
-            to="/vs-com"
+          <button
+            onClick={() => handleStart("/vs-com")}
             className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition-all text-center"
           >
             1 vs Komputer
-          </Link>
+          </button>
 
-          <Link
-            to="/vs-player"
+          <button
+            onClick={() => handleStart("/vs-player")}
             className="px-6 py-3 bg-green-600 text-white font-semibold rounded-xl shadow hover:bg-green-700 transition-all text-center"
           >
             1 vs 1 Bergantian
-          </Link>
+          </button>
         </div>
       </motion.div>
     </div>
