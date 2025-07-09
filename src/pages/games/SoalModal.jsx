@@ -7,7 +7,7 @@ export const SoalModal = ({ show, soal, onJawab, onClose }) => {
   useEffect(() => {
     if (!show || !soal) return;
 
-    setCountdown(15);
+    setCountdown(30);
 
     const timer = setInterval(() => {
       setCountdown((prev) => {

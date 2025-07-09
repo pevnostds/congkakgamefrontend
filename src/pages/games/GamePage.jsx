@@ -115,31 +115,21 @@ export default function GamePage() {
       biji--;
     }
 
-    if (pemain === "player") {
-      setPlayerNilai((prev) => prev + nilaiSoal);
-    } else {
-      setKomputerNilai((prev) => prev + nilaiSoal);
-    }
+    // Tambah skor soal
+    if (pemain === "player") setPlayerNilai((prev) => prev + nilaiSoal);
+    else setKomputerNilai((prev) => prev + nilaiSoal);
 
+    // Update state papan
     setPlayerLubang(lubangP);
     setKomputerLubang(lubangK);
     setPlayerGudang(gudangP);
     setKomputerGudang(gudangK);
 
+    // Cek kondisi game over: jika salah satu sisi kosong
     const semuaKosongP = lubangP.every((val) => val === 0);
     const semuaKosongK = lubangK.every((val) => val === 0);
 
-    if (semuaKosongP && semuaKosongK) {
-      const sisaP = lubangP.reduce((a, b) => a + b, 0);
-      const sisaK = lubangK.reduce((a, b) => a + b, 0);
-
-      gudangP += sisaP;
-      gudangK += sisaK;
-
-      setPlayerLubang(Array(7).fill(0));
-      setKomputerLubang(Array(7).fill(0));
-      setPlayerGudang(gudangP);
-      setKomputerGudang(gudangK);
+    if (semuaKosongP || semuaKosongK) {
       setGameOver(true);
 
       const simpanSkor = async () => {
@@ -152,7 +142,6 @@ export default function GamePage() {
           toast.error("Gagal menyimpan skor ke server.");
         }
       };
-
       simpanSkor();
 
       setTimeout(() => {
@@ -167,17 +156,17 @@ export default function GamePage() {
           title: "Permainan Selesai!",
           icon: "info",
           html: `
-        <div class="text-left">
-          <p class="font-semibold">🔹 Skor Lumbung:</p>
-          <p>Kamu: <b>${gudangP}</b> &nbsp; | &nbsp; Komputer: <b>${gudangK}</b></p>
+          <div class="text-left">
+            <p class="font-semibold">🔹 Skor Lumbung:</p>
+            <p>Kamu: <b>${gudangP}</b> &nbsp; | &nbsp; Komputer: <b>${gudangK}</b></p>
 
-          <p class="mt-2 font-semibold">🧠 Skor Bonus Nilai (dari soal):</p>
-          <p>Kamu: <b>${playerNilai}</b> &nbsp; | &nbsp; Komputer: <b>${komputerNilai}</b></p>
+            <p class="mt-2 font-semibold">🧠 Skor Bonus Nilai (dari soal):</p>
+            <p>Kamu: <b>${playerNilai}</b> &nbsp; | &nbsp; Komputer: <b>${komputerNilai}</b></p>
 
-          <hr class="my-2" />
-          <p class="text-lg font-bold">${hasil}</p>
-        </div>
-      `,
+            <hr class="my-2" />
+            <p class="text-lg font-bold">${hasil}</p>
+          </div>
+        `,
           confirmButtonText: "Main Lagi",
           customClass: {
             confirmButton:
@@ -185,29 +174,37 @@ export default function GamePage() {
           },
           buttonsStyling: false,
         }).then((result) => {
-          if (result.isConfirmed) {
-            resetGame();
-          }
+          if (result.isConfirmed) resetGame();
         });
       }, 500);
-    } else {
-      let nextTurn = pemain === "player" ? "komputer" : "player";
-      if (
-        posisiTerakhir?.sisi === "gudang" &&
-        posisiTerakhir.pemain === pemain
-      ) {
-        nextTurn = pemain;
-      }
-      if (
-        posisiTerakhir?.sisi === pemain &&
-        ((pemain === "player" && lubangP[posisiTerakhir.index] === 1) ||
-          (pemain === "komputer" && lubangK[posisiTerakhir.index] === 1))
-      ) {
-        nextTurn = pemain === "player" ? "komputer" : "player";
-      }
-      gantiTurn.current.play();
-      setCurrentTurn(nextTurn);
+      return;
     }
+
+    // Atur giliran berikutnya
+    let nextTurn = pemain === "player" ? "komputer" : "player";
+
+    // Jika berhenti di gudang sendiri, giliran tidak berganti
+    if (posisiTerakhir?.sisi === "gudang" && posisiTerakhir.pemain === pemain) {
+      nextTurn = pemain;
+    }
+
+    // Jika berhenti di lubang kosong milik sendiri, giliran berganti
+    if (
+      posisiTerakhir?.sisi === pemain &&
+      ((pemain === "player" && lubangP[posisiTerakhir.index] === 1) ||
+        (pemain === "komputer" && lubangK[posisiTerakhir.index] === 1))
+    ) {
+      nextTurn = pemain === "player" ? "komputer" : "player";
+    }
+
+    // Cek kalau nextTurn tidak punya biji, skip balik ke pemain awal
+    const nextLubang = nextTurn === "player" ? lubangP : lubangK;
+    if (nextLubang.every((val) => val === 0)) {
+      nextTurn = pemain;
+    }
+
+    gantiTurn.current.play();
+    setCurrentTurn(nextTurn);
   };
 
   useEffect(() => {

@@ -129,32 +129,24 @@ export default function GamePage1v1() {
     const semuaKosong1 = lubang1.every((val) => val === 0);
     const semuaKosong2 = lubang2.every((val) => val === 0);
 
-    if (semuaKosong1 && semuaKosong2) {
-      const sisa1 = lubang1.reduce((a, b) => a + b, 0);
-      const sisa2 = lubang2.reduce((a, b) => a + b, 0);
-      gudang1Temp += sisa1;
-      gudang2Temp += sisa2;
-
-      setPlayer1(Array(7).fill(0));
-      setPlayer2(Array(7).fill(0));
-      setGudang1(gudang1Temp);
-      setGudang2(gudang2Temp);
-      setGameOver(true);
+    if (semuaKosong1 || semuaKosong2) {
       victory.current.play();
+      setGameOver(true);
+
       Swal.fire({
         title: "Permainan Selesai!",
         icon: "info",
         html: `
-        <p>Skor Lumbung: Player 1 = <b>${gudang1Temp}</b> | Player 2 = <b>${gudang2Temp}</b></p>
-        <p>Bonus Nilai Soal: Player 1 = <b>${nilai1}</b> | Player 2 = <b>${nilai2}</b></p>
-        <hr />
-        <p><b>${
-          gudang1Temp > gudang2Temp
-            ? "🎉 Player 1 Menang!"
-            : gudang2Temp > gudang1Temp
-            ? "🎉 Player 2 Menang!"
-            : "🤝 Seri!"
-        }</b></p>`,
+      <p>Skor Lumbung: Player 1 = <b>${gudang1Temp}</b> | Player 2 = <b>${gudang2Temp}</b></p>
+      <p>Bonus Nilai Soal: Player 1 = <b>${nilai1}</b> | Player 2 = <b>${nilai2}</b></p>
+      <hr />
+      <p><b>${
+        gudang1Temp > gudang2Temp
+          ? "🎉 Player 1 Menang!"
+          : gudang2Temp > gudang1Temp
+          ? "🎉 Player 2 Menang!"
+          : "🤝 Seri!"
+      }</b></p>`,
         confirmButtonText: "Main Lagi",
         customClass: {
           confirmButton:
