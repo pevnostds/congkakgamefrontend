@@ -3,9 +3,8 @@ import { BoardRow } from "./BoardRow";
 import { HomeStore } from "./HomeStore";
 import { PlayerInfo } from "./PlayerInfo";
 import { SoalModal } from "./SoalModal";
-import { getRandomSoal, finishGame } from "../../api/apiSoal";
+import { getRandomSoal } from "../../api/apiSoal";
 import Swal from "sweetalert2";
-import toast from "react-hot-toast";
 import SoundControl from "../../components/Sound";
 
 const useAudio = (url) => {
@@ -125,24 +124,12 @@ export default function GamePage() {
     setPlayerGudang(gudangP);
     setKomputerGudang(gudangK);
 
-    // Cek kondisi game over: jika salah satu sisi kosong
     const semuaKosongP = lubangP.every((val) => val === 0);
     const semuaKosongK = lubangK.every((val) => val === 0);
 
-    if (semuaKosongP || semuaKosongK) {
+    if (semuaKosongP && semuaKosongK) {
       setGameOver(true);
-
-      const simpanSkor = async () => {
-        try {
-          await finishGame({ total_nilai: playerNilai });
-          victory.current.play();
-          toast.success("Skor berhasil disimpan!");
-        } catch (error) {
-          console.error("Gagal menyimpan skor:", error);
-          toast.error("Gagal menyimpan skor ke server.");
-        }
-      };
-      simpanSkor();
+      victory.current.play();
 
       setTimeout(() => {
         const hasil =
@@ -156,17 +143,17 @@ export default function GamePage() {
           title: "Permainan Selesai!",
           icon: "info",
           html: `
-          <div class="text-left">
-            <p class="font-semibold">🔹 Skor Lumbung:</p>
-            <p>Kamu: <b>${gudangP}</b> &nbsp; | &nbsp; Komputer: <b>${gudangK}</b></p>
+      <div class="text-left">
+        <p class="font-semibold">🔹 Skor Lumbung:</p>
+        <p>Kamu: <b>${gudangP}</b> &nbsp; | &nbsp; Komputer: <b>${gudangK}</b></p>
 
-            <p class="mt-2 font-semibold">🧠 Skor Bonus Nilai (dari soal):</p>
-            <p>Kamu: <b>${playerNilai}</b> &nbsp; | &nbsp; Komputer: <b>${komputerNilai}</b></p>
+        <p class="mt-2 font-semibold">🧠 Skor Bonus Nilai (dari soal):</p>
+        <p>Kamu: <b>${playerNilai}</b> &nbsp; | &nbsp; Komputer: <b>${komputerNilai}</b></p>
 
-            <hr class="my-2" />
-            <p class="text-lg font-bold">${hasil}</p>
-          </div>
-        `,
+        <hr class="my-2" />
+        <p class="text-lg font-bold">${hasil}</p>
+      </div>
+    `,
           confirmButtonText: "Main Lagi",
           customClass: {
             confirmButton:
@@ -180,15 +167,10 @@ export default function GamePage() {
       return;
     }
 
-    // Atur giliran berikutnya
     let nextTurn = pemain === "player" ? "komputer" : "player";
-
-    // Jika berhenti di gudang sendiri, giliran tidak berganti
     if (posisiTerakhir?.sisi === "gudang" && posisiTerakhir.pemain === pemain) {
       nextTurn = pemain;
     }
-
-    // Jika berhenti di lubang kosong milik sendiri, giliran berganti
     if (
       posisiTerakhir?.sisi === pemain &&
       ((pemain === "player" && lubangP[posisiTerakhir.index] === 1) ||
@@ -196,8 +178,6 @@ export default function GamePage() {
     ) {
       nextTurn = pemain === "player" ? "komputer" : "player";
     }
-
-    // Cek kalau nextTurn tidak punya biji, skip balik ke pemain awal
     const nextLubang = nextTurn === "player" ? lubangP : lubangK;
     if (nextLubang.every((val) => val === 0)) {
       nextTurn = pemain;
