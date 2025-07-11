@@ -13,6 +13,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.81.5",
     "axios": "^1.10.0",
+    "dayjs": "^1.11.13",
     "flowbite": "^3.1.2",
     "flowbite-react": "^0.11.8",
     "framer-motion": "^12.23.0",

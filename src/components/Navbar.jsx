@@ -24,6 +24,12 @@ export const Navbar = () => {
             {role === "admin" && (
               <>
                 <Link
+                  to="/hasil"
+                  className="text-gray-700 hover:text-blue-600 font-medium"
+                >
+                  Hasil
+                </Link>
+                <Link
                   to="/soal"
                   className="text-gray-700 hover:text-blue-600 font-medium"
                 >
@@ -92,6 +98,12 @@ export const Navbar = () => {
 
           {role === "admin" && (
             <>
+              <Link
+                to="/hasil"
+                className="block text-gray-700 hover:text-blue-600 font-medium"
+              >
+                Hasil
+              </Link>
               <Link
                 to="/soal"
                 className="block text-gray-700 hover:text-blue-600 font-medium"

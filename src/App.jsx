@@ -17,6 +17,7 @@ import NotFoundPage from "./components/NotFoundPage";
 import { TambahUser } from "./pages/user/UserForm";
 import GameVs1v1 from "./pages/games/Game1vs1";
 import { StartScreen } from "./pages/games/StartScreen";
+import AdminAllGame from "./pages/hasil/Hasil";
 function App() {
   const isLoggedIn = useAuth();
   return (
@@ -43,6 +44,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <Soal />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hasil"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminAllGame />
               </ProtectedRoute>
             }
           />
