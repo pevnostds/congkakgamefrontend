@@ -12,7 +12,7 @@ const useAudio = (url) => {
   audio.current.preload = "auto";
   return audio;
 };
-const initialBiji = 1;
+const initialBiji = 5;
 
 export default function GamePage() {
   const [playerLubang, setPlayerLubang] = useState(Array(7).fill(initialBiji));
