@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { BoardRow } from "./BoardRow";
 import { HomeStore } from "./HomeStore";
 import { PlayerInfo } from "./PlayerInfo";
-import { SoalModal } from "./SoalModal";
+import {SoalModal} from "./SoalModal";
 import { getRandomSoal, submitAnswer, finishGame } from "../../api/apiSoal";
 import Swal from "sweetalert2";
 import SoundControl from "../../components/Sound";
@@ -39,12 +39,34 @@ export default function GamePage1v1() {
   const [giliran2, setGiliran2] = useState(0);
   const [nama1, setNama1] = useState("");
   const [nama2, setNama2] = useState("");
+  const [selectedHoleIndex, setSelectedHoleIndex] = useState(null);
+  const [currentBackground, setCurrentBackground] = useState("");
+
   const [showInputModal, setShowInputModal] = useState(true);
 
   const klikSoal = useRef(new Audio("/sound/klik-soal.mp3"));
   const gantiTurn = useRef(new Audio("/sound/turn.mp3"));
   const victory = useRef(new Audio("/sound/victory.mp3"));
   const resetGame = () => window.location.reload();
+  const bgPlayer2 = [
+    "url('/images/hewan/bg-hewan-1.jpg')",
+    "url('/images/hewan/bg-hewan-2.jpg')",
+    "url('/images/hewan/bg-hewan-3.jpg')",
+    "url('/images/hewan/bg-hewan-4.jpg')",
+    "url('/images/hewan/bg-hewan-5.jpg')",
+    "url('/images/hewan/bg-hewan-6.jpg')",
+    "url('/images/hewan/bg-hewan-7.jpg')",
+  ];
+
+  const bgPlayer1 = [
+    "url('/images/bunga/bg-bunga-1.jpg')",
+    "url('/images/bunga/bg-bunga-2.jpg')",
+    "url('/images/bunga/bg-bunga-3.jpg')",
+    "url('/images/bunga/bg-bunga-4.jpg')",
+    "url('/images/bunga/bg-bunga-5.jpg')",
+    "url('/images/bunga/bg-bunga-6.jpg')",
+    "url('/images/bunga/bg-bunga-7.jpg')",
+  ];
 
   const handlePilihLubang = async (index) => {
     const currentPlayer = currentTurn;
@@ -64,9 +86,13 @@ export default function GamePage1v1() {
     } else {
       setSoalPlayer2((prev) => [...prev, soal.id]);
     }
+    const backgroundImage =
+      currentPlayer === "player1" ? bgPlayer1[index] : bgPlayer2[index];
 
+    setSelectedHoleIndex(index);
     setSelectedIndex(index);
     setCurrentSoal(soal);
+    setCurrentBackground(backgroundImage);
     setModalOpen(true);
   };
 
@@ -308,7 +334,11 @@ export default function GamePage1v1() {
         soal={currentSoal}
         onJawab={handleJawab}
         onClose={() => setModalOpen(false)}
-         currentTurn={currentTurn}
+        currentTurn={currentTurn}
+        player={currentTurn}
+        nama1={nama1}
+        nama2={nama2}
+        backgroundImage={currentBackground}
       />
     </div>
   );

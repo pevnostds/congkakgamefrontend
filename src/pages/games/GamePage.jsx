@@ -12,7 +12,7 @@ const useAudio = (url) => {
   audio.current.preload = "auto";
   return audio;
 };
-const initialBiji = 5;
+const initialBiji = 1;
 
 export default function GamePage() {
   const [playerLubang, setPlayerLubang] = useState(Array(7).fill(initialBiji));
@@ -257,6 +257,8 @@ export default function GamePage() {
         soal={currentSoal}
         onJawab={handleJawab}
         onClose={() => setModalOpen(false)}
+        currentTurn={currentTurn}
+        player={currentTurn}
       />
     </div>
   );
