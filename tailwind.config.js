@@ -8,7 +8,11 @@ export default {
     "./node_modules/flowbite/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        utama: "url('/images/bg-biologi.png')",
+      },
+    },
   },
   plugins: [flowbite],
 };

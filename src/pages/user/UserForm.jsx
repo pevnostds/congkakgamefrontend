@@ -50,7 +50,7 @@ export const TambahUser = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200 px-4">
+    <div className="min-h-screen flex items-center justify-center  px-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-md p-6">
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
           Tambah User Baru

@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_HASIL_GAME_URL = import.meta.env.VITE_API_HASIL_GAME_URL;
 
-export default function useHasilGame(page = 1, limit = 10) {
+export default function useHasilGame(page = 1, limit = 5) {
   const [hasilGame, setHasilGame] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -13,6 +13,7 @@ export default function useHasilGame(page = 1, limit = 10) {
 
   useEffect(() => {
     const fetchHasilGame = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `${API_HASIL_GAME_URL}?page=${page}&limit=${limit}`,
@@ -22,8 +23,12 @@ export default function useHasilGame(page = 1, limit = 10) {
             },
           }
         );
-        setHasilGame(response.data.data);
-        setPagination(response.data.pagination);
+
+        setHasilGame(response.data.data || []);
+        setPagination({
+          currentPage: response.data.currentPage || 1,
+          totalPages: response.data.totalPages || 1,
+        });
       } catch (error) {
         console.error("Gagal mengambil hasil game:", error);
       } finally {

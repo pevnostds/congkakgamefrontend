@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "flowbite-react";
 
-export const SoalModal = ({ show, soal, onJawab, onClose }) => {
+export const SoalModal = ({ show, soal, onJawab, onClose, currentTurn }) => {
   const [countdown, setCountdown] = useState(6);
 
   useEffect(() => {
     if (!show || !soal) return;
 
-    setCountdown(30);
+    setCountdown(60);
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -18,11 +18,12 @@ export const SoalModal = ({ show, soal, onJawab, onClose }) => {
         return prev - 1;
       });
     }, 1000);
-        
+
     return () => clearInterval(timer);
   }, [show, soal]);
 
   if (!soal) return null;
+  const isPlayer2 = currentTurn === "player2";
 
   return (
     <Modal
@@ -30,18 +31,30 @@ export const SoalModal = ({ show, soal, onJawab, onClose }) => {
       onClose={onClose}
       size="md"
       popup
-      className="bg-black bg-opacity-60 backdrop-blur-sm"
+      className="bg-white bg-opacity-60 backdrop-blur-sm"
     >
-      <div className="bg-white rounded-2xl p-6 shadow-xl w-full max-w-md mx-auto">
-        <ModalHeader className="text-xl font-bold text-center text-gray-800 pb-2">
-          Jawab Pertanyaan Berikut
+      <div
+        className="rounded-2xl p-6 shadow-xl w-full max-w-md mx-auto bg-cover bg-center text-white"
+        style={{
+          backgroundImage: isPlayer2
+            ? "url('/images/bg-hewan.jpg')"
+            : "url('/images/bg-tumbuhan.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <ModalHeader className="font-bold text-center pb-2">
+          <p className="text-lg text-white">Jawab Pertanyaan Berikut</p>
         </ModalHeader>
         <ModalBody>
-          <div className="mb-3 text-right text-sm text-gray-500">
+          <div className="mb-3 text-right text-sm text-white-500">
             Sisa waktu: <span className="font-bold">{countdown}s</span>
           </div>
 
-          <p className="text-gray-700 font-medium mb-4">{soal.soal}</p>
+          <p className="bg-stone-600 text-white font-medium mb-4">
+            {soal.soal}
+          </p>
           <div className="space-y-3">
             <button
               onClick={() => onJawab("a")}

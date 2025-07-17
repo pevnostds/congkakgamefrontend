@@ -75,7 +75,7 @@ export const SoalForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-white to-blue-300 px-4 py-6">
+    <div className="min-h-screen  px-4 py-6">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6">
         <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">
           {isEdit ? "Edit Soal" : "Tambah Soal"}

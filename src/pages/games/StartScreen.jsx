@@ -16,7 +16,7 @@ export const StartScreen = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-200 to-indigo-300 p-4">
+    <div className="flex items-center justify-center min-h-screen ">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -33,10 +33,14 @@ export const StartScreen = () => {
         </p>
 
         <ul className="text-justify list-decimal list-inside text-sm sm:text-base text-gray-600 mb-6 space-y-2">
-          <li>Jawab soal sebelum melangkah</li>
-          <li>Jawaban benar menambah skor nilai</li>
-          <li>Masukkan Biji Ke Lumbung</li>
-          <li>Pemain dengan total skor tertinggi menang</li>
+          <li>Pilih Lumbung Congkak Mana Yang Akan DiJalankan Pertama</li>
+          <li>Jawablah Pertanyaan Sebelum Menjalankan Congkak</li>
+          <li>Perttanyaan Terdiri Dari 14 Soal</li>
+          <li>Jawaban Benar Mendapatkan Skor 10/Soal</li>
+          <li>Masukkan Biji Kelumbung Untuk Mendapatkan Poin</li>
+          <li>Pemain Yang Menjawab 14 Soal Terlebih Dahulu Permainan Selesai</li>
+          <li>Pemenang Ditentukan Dari Nilai Skor Pertanyaan Dan Jumlah Penyimpanan Biji Congkak</li>
+
         </ul>
 
         <p className="text-gray-700 text-sm sm:text-base mb-6 uppercase font-bold">

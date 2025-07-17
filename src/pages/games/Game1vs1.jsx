@@ -33,11 +33,13 @@ export default function GamePage1v1() {
   const [modalOpen, setModalOpen] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [gameSesion, setGameSesion] = useState(generateGameId());
-
   const [soalPlayer1, setSoalPlayer1] = useState([]);
   const [soalPlayer2, setSoalPlayer2] = useState([]);
   const [giliran1, setGiliran1] = useState(0);
   const [giliran2, setGiliran2] = useState(0);
+  const [nama1, setNama1] = useState("");
+  const [nama2, setNama2] = useState("");
+  const [showInputModal, setShowInputModal] = useState(true);
 
   const klikSoal = useRef(new Audio("/sound/klik-soal.mp3"));
   const gantiTurn = useRef(new Audio("/sound/turn.mp3"));
@@ -71,10 +73,7 @@ export default function GamePage1v1() {
   const handleJawab = async (jawaban) => {
     const isCorrect = jawaban === currentSoal.jawaban_benar;
     const nilai = isCorrect ? currentSoal.nilai : 0;
-    const isPlayer1 = currentTurn === "player1";
-
-    // Update nilai dan giliran
-    if (isPlayer1) {
+    if (currentTurn === "player1") {
       setNilai1((prev) => prev + nilai);
       setGiliran1((prev) => prev + 1);
     } else {
@@ -92,7 +91,7 @@ export default function GamePage1v1() {
         questionId: currentSoal.id,
         jawaban,
         isCorrect,
-        namaPemain: currentTurn,
+        namaPemain: currentTurn === "player1" ? nama1 : nama2,
       });
     } catch (error) {
       console.error("❌ Gagal submit jawaban ke server:", error);
@@ -173,12 +172,12 @@ export default function GamePage1v1() {
     try {
       const hasilPemain = [
         {
-          namaPemain: "player1",
+          namaPemain: nama1,
           total_nilai: nilai1,
           skorLumbung: g1,
         },
         {
-          namaPemain: "player2",
+          namaPemain: nama2,
           total_nilai: nilai2,
           skorLumbung: g2,
         },
@@ -204,13 +203,13 @@ export default function GamePage1v1() {
     <p>Skor Lumbung: Player 1 = <b>${g1}</b> | Player 2 = <b>${g2}</b></p>
     <p>Bonus Nilai: Player 1 = <b>${nilai1}</b> | Player 2 = <b>${nilai2}</b></p>
     <hr />
-    <p><b>${
-      g1 > g2
-        ? "🎉 Player 1 Menang!"
-        : g2 > g1
-        ? "🎉 Player 2 Menang!"
-        : "🤝 Seri!"
-    }</b></p>`,
+   <p><b>${
+     nilai1 > nilai2
+       ? `🎉 ${nama1} Menang!`
+       : nilai2 > nilai1
+       ? `🎉 ${nama2} Menang!`
+       : "🤝 Seri!"
+   }</b></p>`,
       confirmButtonText: "Main Lagi",
       customClass: {
         confirmButton:
@@ -219,16 +218,67 @@ export default function GamePage1v1() {
       buttonsStyling: false,
     }).then(resetGame);
   };
+  if (showInputModal) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10 ">
+        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-sm max-w-md sm:max-w-lg md:max-w-xl space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-indigo-700">
+            Masukkan Nama Pemain
+          </h2>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nama Player 1
+            </label>
+            <input
+              type="text"
+              value={nama1}
+              onChange={(e) => setNama1(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-400 focus:outline-none"
+              placeholder="Contoh: Andi"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nama Player 2
+            </label>
+            <input
+              type="text"
+              value={nama2}
+              onChange={(e) => setNama2(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-400 focus:outline-none"
+              placeholder="Contoh: Budi"
+            />
+          </div>
+
+          <button
+            onClick={() => {
+              if (!nama1.trim() || !nama2.trim())
+                return toast.error("Nama kedua pemain wajib diisi");
+              setShowInputModal(false);
+            }}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md transition"
+          >
+            Mulai Game
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <SoundControl />
       <PlayerInfo
-        name="Player 2"
+        name={"2: " + nama2}
         skorLumbung={gudang2}
         skorNilai={nilai2}
         turn={currentTurn === "player2"}
       />
+      <div className="text-center text-2xl font-bold text-red-600 mb-2 animate-bounce">
+        ⬅️ Arah Jalan
+      </div>
       <BoardRow
         lubang={player2}
         onClick={(i) => currentTurn === "player2" && handlePilihLubang(i)}
@@ -243,8 +293,11 @@ export default function GamePage1v1() {
         onClick={(i) => currentTurn === "player1" && handlePilihLubang(i)}
         disabled={currentTurn !== "player1" || gameOver}
       />
+      <div className="text-center text-2xl font-bold text-blue-600 mt-2 animate-bounce">
+        ➡️ Arah Jalan
+      </div>
       <PlayerInfo
-        name="Player 1"
+        name={"1: " + nama1}
         skorLumbung={gudang1}
         skorNilai={nilai1}
         turn={currentTurn === "player1"}
@@ -255,6 +308,7 @@ export default function GamePage1v1() {
         soal={currentSoal}
         onJawab={handleJawab}
         onClose={() => setModalOpen(false)}
+         currentTurn={currentTurn}
       />
     </div>
   );
