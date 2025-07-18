@@ -10,7 +10,8 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        utama: "url('/images/bg-biologi.png')",
+        utama: "url('/images/bg-utama.jpg')",
+        main: "url('/images/bg-utama-2.jpg')",
       },
     },
   },

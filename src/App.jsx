@@ -18,10 +18,31 @@ import { TambahUser } from "./pages/user/UserForm";
 import GameVs1v1 from "./pages/games/Game1vs1";
 import { StartScreen } from "./pages/games/StartScreen";
 import AdminAllGame from "./pages/hasil/Hasil";
-function App() {
-  const isLoggedIn = useAuth();
+import { useLocation } from "react-router-dom";
+
+function AppWrapper() {
   return (
     <Router>
+      <App />
+    </Router>
+  );
+}
+
+function App() {
+  const isLoggedIn = useAuth();
+  const location = useLocation();
+  const path = location.pathname;
+
+  // Tentukan halaman mana saja yang pakai background bg-utama-2
+  const isAuthPage =
+    path === "/login" || path === "/register" || path === "/games";
+
+  return (
+    <div
+      className={`min-h-screen bg-cover bg-center ${
+        isAuthPage ? "bg-main" : "bg-utama"
+      }`}
+    >
       {isLoggedIn && <Navbar />}
       <Toaster position="top-right" />
 
@@ -98,8 +119,8 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
-    </Router>
+    </div>
   );
 }
 
-export default App;
+export default AppWrapper;
