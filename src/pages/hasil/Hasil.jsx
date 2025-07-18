@@ -1,19 +1,24 @@
 import { useState } from "react";
 import useHasilGame from "../../api/hasil";
+import { handleDeleteGame } from "../../api/hasil";
 
 export default function AdminAllGame() {
   const [page, setPage] = useState(1);
   const { hasilGame, loading, pagination } = useHasilGame(page, 10);
+  const [games, setGames] = useState([]);
 
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
   const handleNext = () =>
     setPage((prev) => Math.min(prev + 1, pagination.totalPages));
 
-  if (loading) return <p className="p-4">Loading...</p>;
+  if (loading) return <p className="p-4 text-center">Loading...</p>;
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Rekap Seluruh Game</h2>
+      <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">
+        Rekap Seluruh Game
+      </h2>
+
       <div className="space-y-6">
         {hasilGame.length > 0 ? (
           hasilGame.map((game, index) => (
@@ -21,49 +26,63 @@ export default function AdminAllGame() {
               key={index}
               className="border shadow rounded-md overflow-hidden"
             >
-              <div className="bg-gray-100 p-3 font-semibold text-sm">
+              <div className="bg-gray-100 px-4 py-3 font-semibold text-sm sm:text-base">
                 Game ID: {game.gameId}
               </div>
-              <table className="w-full text-sm text-center text-gray-700">
-                <thead className="text-xs text-gray-100 uppercase bg-blue-500">
-                  <tr>
-                    <th className="px-4 py-2 border">Nama Pemain</th>
-                    <th className="px-4 py-2 border">Jawaban Benar</th>
-                    <th className="px-4 py-2 border">Jawaban Salah</th>
-                    <th className="p-2 border">Total Nilai</th>
-                    <th className="p-2 border">Skor Lumbung</th>
-                  </tr>
-                </thead>
-                <tbody className="text-center">
-                  {game.players.map((player, idx) => (
-                    <tr
-                      key={idx}
-                      className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                    >
-                      <td className="px-4 py-2 border">{player.namaPemain}</td>
-                      <td className="px-4 py-2 border">{player.benar}</td>
-                      <td className="px-4 py-2 border">{player.salah}</td>
-                      <td className="p-2 border">{player.total_nilai}</td>
-                      <td className="p-2 border">{player.skorLumbung}</td>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-center text-gray-700">
+                  <thead className="text-xs sm:text-sm text-white uppercase bg-blue-600">
+                    <tr>
+                      <th className="px-4 py-2 border">Nama Pemain</th>
+                      <th className="px-4 py-2 border">Jawaban Benar</th>
+                      <th className="px-4 py-2 border">Jawaban Salah</th>
+                      <th className="px-4 py-2 border">Total Nilai</th>
+                      <th className="px-4 py-2 border">Skor Lumbung</th>
+                      <th className="px-4 py-2 border">Aksi</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {game.players.map((player, idx) => (
+                      <tr
+                        key={idx}
+                        className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                      >
+                        <td className="px-4 py-2 border">{player.namaPemain}</td>
+                        <td className="px-4 py-2 border">{player.benar}</td>
+                        <td className="px-4 py-2 border">{player.salah}</td>
+                        <td className="px-4 py-2 border">{player.total_nilai}</td>
+                        <td className="px-4 py-2 border">{player.skorLumbung}</td>
+                        <td className="px-4 py-2 border">
+                          <button
+                            onClick={() =>
+                              handleDeleteGame(game.gameId, setGames)
+                            }
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                          >
+                            Hapus
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           ))
         ) : (
-          <p className="text-black font-bold text-center">
+          <p className="text-black font-semibold text-center">
             Belum ada data game.
           </p>
         )}
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-6 font-bold">
+      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 font-bold gap-3">
         <button
           onClick={handlePrev}
           disabled={page === 1}
-          className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
+          className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-1 rounded disabled:opacity-50"
         >
           &larr; Sebelumnya
         </button>
@@ -73,7 +92,7 @@ export default function AdminAllGame() {
         <button
           onClick={handleNext}
           disabled={page === pagination.totalPages}
-          className="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
+          className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-1 rounded disabled:opacity-50"
         >
           Selanjutnya &rarr;
         </button>

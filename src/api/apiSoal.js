@@ -5,6 +5,7 @@ const API_SOAL_TAMBAH_URL = import.meta.env.VITE_API_SOAL_CREATE_URL;
 const API_SOAL_RANDOM_URL = import.meta.env.VITE_API_SOAL_RANDOM_URL;
 const API_GAME_SKOR_URL = import.meta.env.VITE_API_GAME_SKOR_URL;
 const API_ANSWER_URL = import.meta.env.VITE_API_ANSWER_URL;
+const API_GAME_DELETE_URL = import.meta.env.VITE_API_DELETE_GAME_URL;
 const token = localStorage.getItem("token");
 
 export const soalTambah = async (data) => {
@@ -116,4 +117,18 @@ export const submitAnswer = async ({
       },
     }
   );
+};
+
+export const deleteGame = async (gameId) => {
+  try {
+    const res = await axios.delete(`${API_GAME_DELETE_URL}${gameId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Gagal menghapus soal:", err);
+    throw err;
+  }
 };
