@@ -61,11 +61,11 @@ export const SoalModal = ({
             </p>
           </ModalHeader>
           <ModalBody className="text-white">
-            <div className="mb-3 text-right text-sm">
+            <div className="mb-2 text-right text-sm">
               Sisa waktu: <span className="font-bold">{countdown}s</span>
             </div>
 
-            <p className="font-medium  mb-4">{soal.soal}</p>
+            <p className="font-medium  mb-2">{soal.soal}</p>
             <div className="space-y-3">
               <button
                 onClick={() => onJawab("a")}
@@ -95,7 +95,7 @@ export const SoalModal = ({
 
             <button
               onClick={onClose}
-              className="mt-6 block mx-auto text-sm bg-red-500 px-4 py-2 rounded text-white hover:bg-red-600 transition"
+              className="mt-2 block mx-auto text-sm bg-red-500 px-4 py-2 rounded text-white hover:bg-red-600 transition"
             >
               Tutup
             </button>
