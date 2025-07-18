@@ -4,7 +4,12 @@ import { handleDeleteGame } from "../../api/hasil";
 
 export default function AdminAllGame() {
   const [page, setPage] = useState(1);
-  const { hasilGame, loading, pagination } = useHasilGame(page, 10);
+  const {
+    hasilGame,
+    loading,
+    pagination,
+    fetchHasilGame: fetchGames,
+  } = useHasilGame(page, 10);
   const [games, setGames] = useState([]);
 
   const handlePrev = () => setPage((prev) => Math.max(prev - 1, 1));
@@ -48,15 +53,25 @@ export default function AdminAllGame() {
                         key={idx}
                         className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
                       >
-                        <td className="px-4 py-2 border">{player.namaPemain}</td>
+                        <td className="px-4 py-2 border">
+                          {player.namaPemain}
+                        </td>
                         <td className="px-4 py-2 border">{player.benar}</td>
                         <td className="px-4 py-2 border">{player.salah}</td>
-                        <td className="px-4 py-2 border">{player.total_nilai}</td>
-                        <td className="px-4 py-2 border">{player.skorLumbung}</td>
+                        <td className="px-4 py-2 border">
+                          {player.total_nilai}
+                        </td>
+                        <td className="px-4 py-2 border">
+                          {player.skorLumbung}
+                        </td>
                         <td className="px-4 py-2 border">
                           <button
                             onClick={() =>
-                              handleDeleteGame(game.gameId, setGames)
+                              handleDeleteGame(
+                                game.gameId,
+                                setGames,
+                                fetchGames
+                              )
                             }
                             className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
                           >

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { deleteGame } from "./apiSoal";
@@ -13,38 +13,38 @@ export default function useHasilGame(page = 1, limit = 5) {
     totalPages: 1,
   });
 
-  useEffect(() => {
-    const fetchHasilGame = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${API_HASIL_GAME_URL}?page=${page}&limit=${limit}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+  const fetchHasilGame = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${API_HASIL_GAME_URL}?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-        setHasilGame(response.data.data || []);
-        setPagination({
-          currentPage: response.data.currentPage || 1,
-          totalPages: response.data.totalPages || 1,
-        });
-      } catch (error) {
-        console.error("Gagal mengambil hasil game:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHasilGame();
+      setHasilGame(response.data.data || []);
+      setPagination({
+        currentPage: response.data.currentPage || 1,
+        totalPages: response.data.totalPages || 1,
+      });
+    } catch (error) {
+      console.error("Gagal mengambil hasil game:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [page, limit]);
 
-  return { hasilGame, loading, pagination };
+  useEffect(() => {
+    fetchHasilGame();
+  }, [fetchHasilGame]);
+
+  return { hasilGame, loading, pagination, fetchHasilGame };
 }
 
-export const handleDeleteGame = async (gameId, setGames) => {
+export const handleDeleteGame = async (gameId, setGames,fetchGames) => {
   const result = await Swal.fire({
     title: "Yakin ingin menghapus?",
     text: "Data permainan ini akan dihapus permanen!",
@@ -65,7 +65,7 @@ export const handleDeleteGame = async (gameId, setGames) => {
     try {
       await deleteGame(gameId);
       toast.success("Data permainan berhasil dihapus.");
-
+        await fetchGames(); 
       setGames((prev) => prev.filter((g) => g.gameId !== gameId));
 
       Swal.fire({
@@ -78,7 +78,7 @@ export const handleDeleteGame = async (gameId, setGames) => {
     } catch (error) {
       Swal.fire({
         title: "Gagal!",
-        text: "Terjadi kesalahan saat menghapus.",
+        text: "Terjadi kesalahan saat menghapus.",error,
         icon: "error",
       });
     }
